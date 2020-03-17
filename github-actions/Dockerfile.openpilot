@@ -80,7 +80,7 @@ COPY ./github-actions/tools /tmp/openpilot/tools
 COPY ./github-actions/release /tmp/openpilot/release
 COPY ./common /tmp/openpilot/common
 COPY ./opendbc /tmp/openpilot/opendbc
-COPY ./cereal /tmp/openpilot/cereal
+COPY ./github-actions/cereal /tmp/openpilot/cereal
 COPY ./panda /tmp/openpilot/panda
 COPY ./selfdrive /tmp/openpilot/selfdrive
 
