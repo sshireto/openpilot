@@ -71,20 +71,20 @@ COPY ./github-actions/flake8_openpilot.sh /tmp/openpilot/
 COPY ./github-actions/pylint_openpilot.sh /tmp/openpilot/
 COPY ./github-actions/.pylintrc /tmp/openpilot/
 
-COPY ./pyextra /tmp/openpilot/pyextra
-COPY ./phonelibs /tmp/openpilot/phonelibs
+COPY ./github-actions/pyextra /tmp/openpilot/pyextra
+COPY ./github-actions/phonelibs /tmp/openpilot/phonelibs
 COPY ./github-actions/external /tmp/openpilot/external
 COPY ./github-actions/laika /tmp/openpilot/laika
 COPY ./github-actions/laika_repo /tmp/openpilot/laika_repo
 COPY ./github-actions/tools /tmp/openpilot/tools
 COPY ./github-actions/release /tmp/openpilot/release
-COPY ./common /tmp/openpilot/common
-COPY ./opendbc /tmp/openpilot/opendbc
+COPY ./github-actions/common /tmp/openpilot/common
+COPY ./github-actions/opendbc /tmp/openpilot/opendbc
 COPY ./github-actions/cereal /tmp/openpilot/cereal
-COPY ./panda /tmp/openpilot/panda
-COPY ./selfdrive /tmp/openpilot/selfdrive
+COPY ./github-actions/panda /tmp/openpilot/panda
+COPY ./github-actions/selfdrive /tmp/openpilot/selfdrive
 
-COPY SConstruct /tmp/openpilot/SConstruct
+COPY ./github-actions/SConstruct /tmp/openpilot/SConstruct
 
 RUN mkdir -p /tmp/openpilot/selfdrive/test/out
 RUN cd /tmp/openpilot && scons -j$(nproc)

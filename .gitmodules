@@ -4,3 +4,9 @@
 [submodule "github-actions/cereal"]
 	path = github-actions/cereal
 	url = https://github.com/commaai/cereal
+[submodule "github-actions/panda"]
+	path = github-actions/panda
+	url = https://github.com/commaai/panda
+[submodule "github-actions/opendbc"]
+	path = github-actions/opendbc
+	url = https://github.com/commaai/opendbc
