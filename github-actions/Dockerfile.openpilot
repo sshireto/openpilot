@@ -87,4 +87,4 @@ COPY ./github-actions/selfdrive /tmp/openpilot/selfdrive
 COPY ./github-actions/SConstruct /tmp/openpilot/SConstruct
 
 RUN mkdir -p /tmp/openpilot/selfdrive/test/out
-RUN cd /tmp/openpilot && scons -j$(nproc)
+RUN cd /tmp/openpilot && sudo scons -j$(nproc)
