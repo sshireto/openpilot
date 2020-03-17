@@ -1,0 +1,3 @@
+[submodule "github-actions/laika_repo"]
+	path = github-actions/laika_repo
+	url = https://github.com/commaai/laika

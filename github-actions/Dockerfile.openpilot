@@ -73,10 +73,10 @@ COPY .github-actions/.pylintrc /tmp/openpilot/
 
 COPY ./pyextra /tmp/openpilot/pyextra
 COPY ./phonelibs /tmp/openpilot/phonelibs
-COPY .github-actions/external /tmp/openpilot/external
-COPY ./laika /tmp/openpilot/laika
-COPY ./laika_repo /tmp/openpilot/laika_repo
-COPY ./tools /tmp/openpilot/tools
+COPY ./github-actions/external /tmp/openpilot/external
+COPY ./github-actions/laika /tmp/openpilot/laika
+COPY ./github-actions/laika_repo /tmp/openpilot/laika_repo
+COPY ./github-actions/tools /tmp/openpilot/tools
 COPY ./release /tmp/openpilot/release
 COPY ./common /tmp/openpilot/common
 COPY ./opendbc /tmp/openpilot/opendbc
