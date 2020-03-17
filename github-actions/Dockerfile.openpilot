@@ -77,7 +77,7 @@ COPY ./github-actions/external /tmp/openpilot/external
 COPY ./github-actions/laika /tmp/openpilot/laika
 COPY ./github-actions/laika_repo /tmp/openpilot/laika_repo
 COPY ./github-actions/tools /tmp/openpilot/tools
-COPY ./release /tmp/openpilot/release
+COPY ./github-actions/release /tmp/openpilot/release
 COPY ./common /tmp/openpilot/common
 COPY ./opendbc /tmp/openpilot/opendbc
 COPY ./cereal /tmp/openpilot/cereal
