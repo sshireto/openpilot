@@ -102,7 +102,7 @@ class LongitudinalMpc():
     v_lead_retention = 1.9  # keep only last x seconds
     v_ego_retention = 2.5
 
-    cur_time = time.time()
+    cur_time = sec_since_boot()
     if self.lead_data['status']:
       self.df_data['v_leads'] = [sample for sample in self.df_data['v_leads'] if
                                  cur_time - sample['time'] <= v_lead_retention
