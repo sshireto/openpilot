@@ -266,17 +266,17 @@ def state_control(frame, rcv_frame, plan, path_plan, CS, CP, state, events, v_cr
   a_acc_sol = plan.aStart + (dt / LON_MPC_STEP) * (plan.aTarget - plan.aStart)
   v_acc_sol = plan.vStart + dt * (a_acc_sol + plan.aStart) / 2.0
 
-  passable_loc = {}
+  params_loc = {}
   if not travis:
-    passable_loc['lead_one'] = sm_smiskol['radarState'].leadOne
-    passable_loc['mpc_TR'] = sm_smiskol['smiskolData'].mpcTR
-    passable_loc['live_tracks'] = sm_smiskol['liveTracks']
-    passable_loc['has_lead'] = plan.hasLead
-    passable_loc['car_state'] = CS
+    params_loc['lead_one'] = sm_smiskol['radarState'].leadOne
+    params_loc['mpc_TR'] = sm_smiskol['smiskolData'].mpcTR
+    params_loc['live_tracks'] = sm_smiskol['liveTracks']
+    params_loc['has_lead'] = plan.hasLead
+    params_loc['car_state'] = CS
 
   # Gas/Brake PID loop
   actuators.gas, actuators.brake = LoC.update(active, CS.vEgo, CS.brakePressed, CS.standstill, CS.cruiseState.standstill,
-                                              v_cruise_kph, v_acc_sol, plan.vTargetFuture, a_acc_sol, CP, passable_loc)
+                                              v_cruise_kph, v_acc_sol, plan.vTargetFuture, a_acc_sol, CP, params_loc)
   # Steering PID loop and lateral MPC
   actuators.steer, actuators.steerAngle, lac_log = LaC.update(active, CS.vEgo, CS.steeringAngle, CS.steeringRate, CS.steeringTorqueEps, CS.steeringPressed, CS.steeringRateLimited, CP, path_plan)
 
