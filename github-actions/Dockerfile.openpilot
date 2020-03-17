@@ -54,8 +54,8 @@ RUN pyenv rehash
 
 RUN pip install pipenv==2018.11.26
 
-COPY Pipfile /tmp/
-COPY Pipfile.lock /tmp/
+COPY github-actions/Pipfile /tmp/
+COPY github-actions/Pipfile.lock /tmp/
 
 RUN python --version
 RUN cd /tmp && pipenv install --system --deploy
@@ -67,13 +67,13 @@ ENV PATH="/tmp/openpilot/external/bin:${PATH}"
 ENV PYTHONPATH /tmp/openpilot:${PYTHONPATH}
 
 RUN mkdir -p /tmp/openpilot
-COPY ./flake8_openpilot.sh /tmp/openpilot/
-COPY ./pylint_openpilot.sh /tmp/openpilot/
-COPY ./.pylintrc /tmp/openpilot/
+COPY .github-actions/flake8_openpilot.sh /tmp/openpilot/
+COPY .github-actions/pylint_openpilot.sh /tmp/openpilot/
+COPY .github-actions/.pylintrc /tmp/openpilot/
 
 COPY ./pyextra /tmp/openpilot/pyextra
 COPY ./phonelibs /tmp/openpilot/phonelibs
-COPY ./external /tmp/openpilot/external
+COPY .github-actions/external /tmp/openpilot/external
 COPY ./laika /tmp/openpilot/laika
 COPY ./laika_repo /tmp/openpilot/laika_repo
 COPY ./tools /tmp/openpilot/tools
