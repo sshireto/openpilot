@@ -132,7 +132,7 @@ def data_sample(CI, CC, sm, can_sock, state, mismatch_counter, can_error_counter
   return CS, events, cal_perc, mismatch_counter, can_error_counter
 
 
-def state_transition(frame, CS, CP, state, events, soft_disable_timer, v_cruise_kph, AM):
+def state_transition(frame, CS, CP, state, events, soft_disable_timer, v_cruise_kph, AM, sm_smiskol, df_alert_manager):
   """Compute conditional state transitions and execute actions on state transitions"""
   enabled = isEnabled(state)
 
@@ -147,6 +147,10 @@ def state_transition(frame, CS, CP, state, events, soft_disable_timer, v_cruise_
   # decrease the soft disable timer at every step, as it's reset on
   # entrance in SOFT_DISABLING state
   soft_disable_timer = max(0, soft_disable_timer - 1)
+
+  df_alert = df_alert_manager.update(sm_smiskol)
+  if df_alert is not None:
+    AM.add(frame, 'dfButtonAlert', enabled, extra_text_1=df_alert, extra_text_2='Dynamic follow: {} profile active'.format(df_alert))
 
   # DISABLED
   if state == State.disabled:
@@ -220,7 +224,7 @@ def state_transition(frame, CS, CP, state, events, soft_disable_timer, v_cruise_
 
 
 def state_control(frame, rcv_frame, plan, path_plan, CS, CP, state, events, v_cruise_kph, v_cruise_kph_last,
-                  AM, rk, LaC, LoC, read_only, is_metric, cal_perc, last_blinker_frame):
+                  AM, rk, LaC, LoC, read_only, is_metric, cal_perc, last_blinker_frame, sm_smiskol):
   """Given the state, this function returns an actuators packet"""
 
   actuators = car.CarControl.Actuators.new_message()
@@ -243,7 +247,7 @@ def state_control(frame, rcv_frame, plan, path_plan, CS, CP, state, events, v_cr
 
   if state in [State.preEnabled, State.disabled]:
     LaC.reset()
-    LoC.reset(v_pid=CS.vEgo)
+    LoC.reset(v_pid=plan.vTargetFuture)
 
   elif state in [State.enabled, State.softDisabling]:
     # parse warnings from car specific interface
@@ -262,9 +266,17 @@ def state_control(frame, rcv_frame, plan, path_plan, CS, CP, state, events, v_cr
   a_acc_sol = plan.aStart + (dt / LON_MPC_STEP) * (plan.aTarget - plan.aStart)
   v_acc_sol = plan.vStart + dt * (a_acc_sol + plan.aStart) / 2.0
 
+  passable_loc = {}
+  if not travis:
+    passable_loc['lead_one'] = sm_smiskol['radarState'].leadOne
+    passable_loc['mpc_TR'] = sm_smiskol['smiskolData'].mpcTR
+    passable_loc['live_tracks'] = sm_smiskol['liveTracks']
+    passable_loc['has_lead'] = plan.hasLead
+    passable_loc['car_state'] = CS
+
   # Gas/Brake PID loop
   actuators.gas, actuators.brake = LoC.update(active, CS.vEgo, CS.brakePressed, CS.standstill, CS.cruiseState.standstill,
-                                              v_cruise_kph, v_acc_sol, plan.vTargetFuture, a_acc_sol, CP)
+                                              v_cruise_kph, v_acc_sol, plan.vTargetFuture, a_acc_sol, CP, passable_loc)
   # Steering PID loop and lateral MPC
   actuators.steer, actuators.steerAngle, lac_log = LaC.update(active, CS.vEgo, CS.steeringAngle, CS.steeringRate, CS.steeringTorqueEps, CS.steeringPressed, CS.steeringRateLimited, CP, path_plan)
 
@@ -430,7 +442,7 @@ def data_send(sm, pm, CS, CI, CP, VM, state, events, actuators, v_cruise_kph, rk
   return CC, events_bytes
 
 
-def controlsd_thread(sm=None, pm=None, can_sock=None):
+def controlsd_thread(sm=None, pm=None, can_sock=None, sm_smiskol=None,):
   gc.disable()
 
   # start the loop
@@ -454,6 +466,9 @@ def controlsd_thread(sm=None, pm=None, can_sock=None):
     sm = messaging.SubMaster(['thermal', 'health', 'liveCalibration', 'dMonitoringState', 'plan', 'pathPlan', \
                               'model'])
 
+  if sm_smiskol is None:
+    sm_smiskol = messaging.SubMaster(['radarState', 'smiskolData', 'liveTracks', 'dynamicFollowButton'])
+
 
   if can_sock is None:
     can_timeout = None if os.environ.get('NO_CAN_TIMEOUT', False) else 100
@@ -465,7 +480,7 @@ def controlsd_thread(sm=None, pm=None, can_sock=None):
   print("Waiting for CAN messages...")
   messaging.get_one_can(can_sock)
 
-  CI, CP = get_car(can_sock, pm.sock['sendcan'], has_relay)
+  CI, CP, candidate = get_car(can_sock, pm.sock['sendcan'], has_relay)
 
   car_recognized = CP.carName != 'mock'
   # If stock camera is disconnected, we loaded car controls and it's not chffrplus
@@ -487,7 +502,7 @@ def controlsd_thread(sm=None, pm=None, can_sock=None):
   startup_alert = get_startup_alert(car_recognized, controller_available)
   AM.add(sm.frame, startup_alert, False)
 
-  LoC = LongControl(CP, CI.compute_gb)
+  LoC = LongControl(CP, CI.compute_gb, candidate)
   VM = VehicleModel(CP)
 
   if CP.lateralTuning.which() == 'pid':
@@ -527,6 +542,7 @@ def controlsd_thread(sm=None, pm=None, can_sock=None):
   df_alert_manager = DfAlertManager(op_params)
 
   while True:
+    sm_smiskol.update(0)
     start_time = sec_since_boot()
     prof.checkpoint("Ratekeeper", ignore=True)
 
@@ -569,13 +585,13 @@ def controlsd_thread(sm=None, pm=None, can_sock=None):
     if not read_only:
       # update control state
       state, soft_disable_timer, v_cruise_kph, v_cruise_kph_last = \
-        state_transition(sm.frame, CS, CP, state, events, soft_disable_timer, v_cruise_kph, AM)
+        state_transition(sm.frame, CS, CP, state, events, soft_disable_timer, v_cruise_kph, AM, sm_smiskol, df_alert_manager)
       prof.checkpoint("State transition")
 
     # Compute actuators (runs PID loops and lateral MPC)
     actuators, v_cruise_kph, v_acc, a_acc, lac_log, last_blinker_frame = \
       state_control(sm.frame, sm.rcv_frame, sm['plan'], sm['pathPlan'], CS, CP, state, events, v_cruise_kph, v_cruise_kph_last, AM, rk,
-                    LaC, LoC, read_only, is_metric, cal_perc, last_blinker_frame)
+                    LaC, LoC, read_only, is_metric, cal_perc, last_blinker_frame, sm_smiskol)
 
     prof.checkpoint("State Control")
 
@@ -589,8 +605,8 @@ def controlsd_thread(sm=None, pm=None, can_sock=None):
     prof.display()
 
 
-def main(sm=None, pm=None, logcan=None):
-  controlsd_thread(sm, pm, logcan)
+def main(sm=None, pm=None, logcan=None, sm_smiskol=None):
+  controlsd_thread(sm, pm, logcan, sm_smiskol)
 
 
 if __name__ == "__main__":

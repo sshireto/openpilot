@@ -192,6 +192,12 @@ ALERTS = [
       AlertStatus.normal, AlertSize.mid,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 15.),
 
+  Alert("dfButtonAlert",
+        "Using profile: ",
+        "",
+        AlertStatus.normal, AlertSize.mid,
+        Priority.LOWER, VisualAlert.none, AudibleAlert.chimeWarning1, 0.2, 0., 2.),
+
   Alert(
       "ethicalDilemma",
       "TAKE CONTROL IMMEDIATELY",
