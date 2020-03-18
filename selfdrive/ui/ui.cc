@@ -261,9 +261,9 @@ static void send_df(UIState *s, int status) {
   cereal::Event::Builder event = msg.initRoot<cereal::Event>();
   auto dfStatus = event.initDynamicFollowButton();
   dfStatus.setStatus(status);
-//
-//  auto words = capnp::messageToFlatArray(msg);
-//  auto bytes = words.asBytes();
+
+  auto words = capnp::messageToFlatArray(msg);
+  auto bytes = words.asBytes();
 //  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());
   std::cout << "status: " << status << std::endl;
 }
