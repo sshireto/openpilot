@@ -271,7 +271,7 @@ static void send_df(UIState *s, int status) {
 static bool handle_df_touch(UIState *s, int touch_x, int touch_y) {
   //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
   if (s->awake && s->vision_connected && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
-    if ((touch_x >= 1700) && (touch_y >= 730)) {
+    if ((touch_x >= 1700) && (touch_y >= 685)) {
       s->scene.uilayout_sidebarcollapsed = true;  // collapse sidebar when tapping df button
       s->scene.dfButtonStatus++;
       if (s->scene.dfButtonStatus > 2) {
