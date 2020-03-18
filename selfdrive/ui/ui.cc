@@ -99,21 +99,6 @@ static void handle_vision_touch(UIState *s, int touch_x, int touch_y) {
   }
 }
 
-static bool handle_df_button(UIState *s, int touch_x, int touch_y) {
-  //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
-  if (s->awake && s->vision_connected && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
-    if (df_button_clicked(touch_x, touch_y)) {
-      s->scene.dfButtonStatus++;
-      if (s->scene.dfButtonStatus > 2){
-        s->scene.dfButtonStatus = 0;
-      }
-      return true;
-      send_df(s, s->scene.dfButtonStatus);
-    }
-  }
-  return false;
-}
-
 volatile sig_atomic_t do_exit = 0;
 static void set_do_exit(int sig) {
   do_exit = 1;
@@ -960,11 +945,8 @@ int main(int argc, char* argv[]) {
     int touched = touch_poll(&touch, &touch_x, &touch_y, 0);
     if (touched == 1) {
       set_awake(s, true);
-      bool df_button_touched = handle_df_button(touch_x, touch_y);
-      if (!df_button_touched){
-        handle_sidebar_touch(s, touch_x, touch_y);
-        handle_vision_touch(s, touch_x, touch_y);
-      }
+      handle_sidebar_touch(s, touch_x, touch_y);
+      handle_vision_touch(s, touch_x, touch_y);
     }
 
     if (!s->vision_connected) {
@@ -1001,6 +983,17 @@ int main(int argc, char* argv[]) {
       s->hardware_timeout--;
     } else {
       s->scene.hwType = cereal_HealthData_HwType_unknown;
+    }
+
+    //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
+    if (s->awake && s->vision_connected && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
+      if (df_button_clicked(touch_x, touch_y)) {
+        s->scene.dfButtonStatus++;
+        if (s->scene.dfButtonStatus > 2){
+          s->scene.dfButtonStatus = 0;
+        }
+        send_df(s, s->scene.dfButtonStatus);
+      }
     }
 
     // Don't waste resources on drawing in case screen is off
