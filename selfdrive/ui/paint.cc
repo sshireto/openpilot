@@ -728,7 +728,7 @@ static void ui_draw_vision_face(UIState *s) {
   nvgFill(s->vg);
 }
 
-static void ui_draw_dynamic_follow_button(UIState *s) {
+static void ui_draw_df_button(UIState *s) {
   int btn_w = 150;
   int btn_h = 150;
   int btn_x = 1920 - btn_w;
@@ -781,7 +781,7 @@ static void ui_draw_vision_footer(UIState *s) {
   nvgRect(s->vg, ui_viz_rx, footer_y, ui_viz_rw, footer_h);
 
   ui_draw_vision_face(s);
-  ui_draw_dynamic_follow_button(s);
+  ui_draw_df_button(s);
 
 #ifdef SHOW_SPEEDLIMIT
   // ui_draw_vision_map(s);
