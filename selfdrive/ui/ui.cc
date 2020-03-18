@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <sys/mman.h>
 #include <sys/resource.h>
-#include <iostream>
 
 #include <capnp/serialize.h>
 #include "cereal/gen/cpp/log.capnp.h"
@@ -86,7 +85,6 @@ static void send_df(UIState *s, int status) {
   auto words = capnp::messageToFlatArray(msg);
   auto bytes = words.asBytes();
   s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());
-  std::cout << "status: " << status << std::endl;
 }
 
 static bool handle_df_touch(UIState *s, int touch_x, int touch_y) {
