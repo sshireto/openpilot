@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <sys/mman.h>
 #include <sys/resource.h>
+#include <iostream.h>
 
 #include <capnp/serialize.h>
 #include "cereal/gen/cpp/log.capnp.h"
@@ -255,6 +256,19 @@ static void ui_init_vision(UIState *s, const VisionStreamBufs back_bufs,
   s->limit_set_speed_timeout = UI_FREQ;
 }
 
+static void send_df(UIState *s, int status){
+  /*
+  capnp::MallocMessageBuilder msg;
+  cereal::Event::Builder event = msg.initRoot<cereal::Event>();
+  auto dfStatus = event.initDynamicFollowButton();
+  dfStatus.setStatus(status);
+
+  auto words = capnp::messageToFlatArray(msg);
+  auto bytes = words.asBytes();
+  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());*/
+  std::cout << "test";
+}
+
 static bool handle_df_button(UIState *s, int touch_x, int touch_y){
   //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
   if (s->awake && s->vision_connected && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
@@ -268,17 +282,6 @@ static bool handle_df_button(UIState *s, int touch_x, int touch_y){
     }
   }
   return false;
-}
-
-static void send_df(UIState *s, int status){
-  capnp::MallocMessageBuilder msg;
-  cereal::Event::Builder event = msg.initRoot<cereal::Event>();
-  auto dfStatus = event.initDynamicFollowButton();
-  dfStatus.setStatus(status);
-
-  auto words = capnp::messageToFlatArray(msg);
-  auto bytes = words.asBytes();
-  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());
 }
 
 static PathData read_path(cereal_ModelData_PathData_ptr pathp) {
