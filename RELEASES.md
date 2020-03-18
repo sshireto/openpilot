@@ -1,6 +1,6 @@
 Stock Additions 0.7.4 (version 0.2)
 ========================
- * Nothing new yet
+ * Sidebar will now not pop out when you tap the Dynamic Follow profile change button when driving
 
 Version 0.7.4 (2020-03-20)
 ========================
