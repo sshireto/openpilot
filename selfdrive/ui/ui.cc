@@ -960,7 +960,7 @@ int main(int argc, char* argv[]) {
     int touched = touch_poll(&touch, &touch_x, &touch_y, 0);
     if (touched == 1) {
       set_awake(s, true);
-      bool df_button_touched = handle_df_button(s, touch_x, touch_y);
+      bool df_button_touched = handle_df_button(touch_x, touch_y);
       if (!df_button_touched){
         handle_sidebar_touch(s, touch_x, touch_y);
         handle_vision_touch(s, touch_x, touch_y);
