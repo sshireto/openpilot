@@ -277,7 +277,7 @@ static bool handle_df_button(UIState *s, int touch_x, int touch_y){
   return false;
 }
 
-void send_df(UIState *s, int status){
+static void send_df(UIState *s, int status){
   capnp::MallocMessageBuilder msg;
   cereal::Event::Builder event = msg.initRoot<cereal::Event>();
   auto dfStatus = event.initDynamicFollowButton();
