@@ -142,7 +142,6 @@ class Planner():
 
       self.a_model = desired_accel
       self.v_model = desired_speed
-      print(desired_speed)
     else:
       self.v_model = 50
       self.a_model = 10
