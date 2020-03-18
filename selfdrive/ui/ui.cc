@@ -257,16 +257,15 @@ static void ui_init_vision(UIState *s, const VisionStreamBufs back_bufs,
 }
 
 static void send_df(UIState *s, int status) {
-  /*
   capnp::MallocMessageBuilder msg;
   cereal::Event::Builder event = msg.initRoot<cereal::Event>();
-  auto dfStatus = event.initDynamicFollowButton();
-  dfStatus.setStatus(status);
-
-  auto words = capnp::messageToFlatArray(msg);
-  auto bytes = words.asBytes();
-  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());*/
-  std::cout << "test";
+//  auto dfStatus = event.initDynamicFollowButton();
+//  dfStatus.setStatus(status);
+//
+//  auto words = capnp::messageToFlatArray(msg);
+//  auto bytes = words.asBytes();
+//  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());
+  std::cout << "test\n";
 }
 
 static bool handle_df_button(UIState *s, int touch_x, int touch_y) {
