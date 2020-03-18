@@ -485,7 +485,11 @@ def manager_prepare(spinner=None):
     if spinner is not None:
       with open('/data/spintest', 'a') as f:
         f.write('{}\n'.format((100.0 - total) + total * (i + 1) / len(managed_processes)))
+      print('---')
       print(((100.0 - total) + total * (i + 1) / len(managed_processes),))
+      print(p)
+      print(i)
+      print('---')
       spinner.update("%d" % ((100.0 - total) + total * (i + 1) / len(managed_processes),))
     prepare_managed_process(p)
 
