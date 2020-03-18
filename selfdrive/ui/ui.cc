@@ -255,22 +255,15 @@ static void ui_init_vision(UIState *s, const VisionStreamBufs back_bufs,
   s->limit_set_speed_timeout = UI_FREQ;
 }
 
-bool df_button_clicked(int touch_x, int touch_y) {
-  if ((touch_x >= 1700) && (touch_y >= 830)) {
-    return true;
-  }
-  return false;
-}
-
 static bool handle_df_button(UIState *s, int touch_x, int touch_y){
   //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
   if (s->awake && s->vision_connected && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
-    if (df_button_clicked(touch_x, touch_y)) {
+    if ((touch_x >= 1700) && (touch_y >= 830)) {
       s->scene.dfButtonStatus++;
       if (s->scene.dfButtonStatus > 2){
         s->scene.dfButtonStatus = 0;
       }
-      send_df(s, s->scene.dfButtonStatus);
+      // send_df(s, s->scene.dfButtonStatus);
       return true;
     }
   }
