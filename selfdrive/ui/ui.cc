@@ -259,8 +259,8 @@ static void ui_init_vision(UIState *s, const VisionStreamBufs back_bufs,
 static void send_df(UIState *s, int status) {
   capnp::MallocMessageBuilder msg;
   cereal::Event::Builder event = msg.initRoot<cereal::Event>();
-//  auto dfStatus = event.initDynamicFollowButton();
-//  dfStatus.setStatus(status);
+  auto dfStatus = event.initDynamicFollowButton();
+  dfStatus.setStatus(status);
 //
 //  auto words = capnp::messageToFlatArray(msg);
 //  auto bytes = words.asBytes();
