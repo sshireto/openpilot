@@ -256,7 +256,7 @@ static void ui_init_vision(UIState *s, const VisionStreamBufs back_bufs,
   s->limit_set_speed_timeout = UI_FREQ;
 }
 
-static void send_df(UIState *s, int status){
+static void send_df(UIState *s, int status) {
   /*
   capnp::MallocMessageBuilder msg;
   cereal::Event::Builder event = msg.initRoot<cereal::Event>();
@@ -269,12 +269,12 @@ static void send_df(UIState *s, int status){
   std::cout << "test";
 }
 
-static bool handle_df_button(UIState *s, int touch_x, int touch_y){
+static bool handle_df_button(UIState *s, int touch_x, int touch_y) {
   //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
   if (s->awake && s->vision_connected && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
     if ((touch_x >= 1700) && (touch_y >= 830)) {
       s->scene.dfButtonStatus++;
-      if (s->scene.dfButtonStatus > 2){
+      if (s->scene.dfButtonStatus > 2) {
         s->scene.dfButtonStatus = 0;
       }
       send_df(s, s->scene.dfButtonStatus);
@@ -956,6 +956,7 @@ int main(int argc, char* argv[]) {
     int touched = touch_poll(&touch, &touch_x, &touch_y, 0);
     if (touched == 1) {
       set_awake(s, true);
+      std::cout << "test1\n";
       handle_sidebar_touch(s, touch_x, touch_y);
       if (!handle_df_button(s, touch_x, touch_y)){
         handle_vision_touch(s, touch_x, touch_y);
