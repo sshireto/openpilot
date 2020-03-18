@@ -265,7 +265,7 @@ static void send_df(UIState *s, int status) {
 //  auto words = capnp::messageToFlatArray(msg);
 //  auto bytes = words.asBytes();
 //  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());
-  std::cout << "test\n";
+  std::cout << "status: " << status << std::endl;
 }
 
 static bool handle_df_button(UIState *s, int touch_x, int touch_y) {
@@ -955,7 +955,6 @@ int main(int argc, char* argv[]) {
     int touched = touch_poll(&touch, &touch_x, &touch_y, 0);
     if (touched == 1) {
       set_awake(s, true);
-      std::cout << "test1\n";
       handle_sidebar_touch(s, touch_x, touch_y);
       if (!handle_df_button(s, touch_x, touch_y)){
         handle_vision_touch(s, touch_x, touch_y);
