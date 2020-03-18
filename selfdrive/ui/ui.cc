@@ -77,6 +77,34 @@ static void navigate_to_home(UIState *s) {
 #endif
 }
 
+static void send_df(UIState *s, int status) {
+  capnp::MallocMessageBuilder msg;
+  cereal::Event::Builder event = msg.initRoot<cereal::Event>();
+  auto dfStatus = event.initDynamicFollowButton();
+  dfStatus.setStatus(status);
+
+  auto words = capnp::messageToFlatArray(msg);
+  auto bytes = words.asBytes();
+  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());
+  std::cout << "status: " << status << std::endl;
+}
+
+static bool handle_df_touch(UIState *s, int touch_x, int touch_y) {
+  //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
+  if (s->awake && s->vision_connected && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
+    if ((touch_x >= 1660) && (touch_y >= 855)) {
+      s->scene.uilayout_sidebarcollapsed = true;  // collapse sidebar when tapping df button
+      s->scene.dfButtonStatus++;
+      if (s->scene.dfButtonStatus > 2) {
+        s->scene.dfButtonStatus = 0;
+      }
+      send_df(s, s->scene.dfButtonStatus);
+      return true;
+    }
+  }
+  return false;
+}
+
 static void handle_sidebar_touch(UIState *s, int touch_x, int touch_y) {
   if (!s->scene.uilayout_sidebarcollapsed && touch_x <= sbr_w) {
     if (touch_x >= settings_btn_x && touch_x < (settings_btn_x + settings_btn_w)
@@ -254,34 +282,6 @@ static void ui_init_vision(UIState *s, const VisionStreamBufs back_bufs,
   s->longitudinal_control_timeout = UI_FREQ / 3;
   s->is_metric_timeout = UI_FREQ / 2;
   s->limit_set_speed_timeout = UI_FREQ;
-}
-
-static void send_df(UIState *s, int status) {
-  capnp::MallocMessageBuilder msg;
-  cereal::Event::Builder event = msg.initRoot<cereal::Event>();
-  auto dfStatus = event.initDynamicFollowButton();
-  dfStatus.setStatus(status);
-
-  auto words = capnp::messageToFlatArray(msg);
-  auto bytes = words.asBytes();
-  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());
-  std::cout << "status: " << status << std::endl;
-}
-
-static bool handle_df_touch(UIState *s, int touch_x, int touch_y) {
-  //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
-  if (s->awake && s->vision_connected && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
-    if ((touch_x >= 1700) && (touch_y >= 300)) {
-      s->scene.uilayout_sidebarcollapsed = true;  // collapse sidebar when tapping df button
-      s->scene.dfButtonStatus++;
-      if (s->scene.dfButtonStatus > 2) {
-        s->scene.dfButtonStatus = 0;
-      }
-      send_df(s, s->scene.dfButtonStatus);
-      return true;
-    }
-  }
-  return false;
 }
 
 static PathData read_path(cereal_ModelData_PathData_ptr pathp) {
