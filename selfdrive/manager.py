@@ -147,7 +147,6 @@ managed_processes = {
   "ubloxd": ("selfdrive/locationd", ["./ubloxd"]),
   "loggerd": ("selfdrive/loggerd", ["./loggerd"]),
   "logmessaged": "selfdrive.logmessaged",
-  "locationd": "selfdrive.locationd.locationd",
   "tombstoned": "selfdrive.tombstoned",
   "logcatd": ("selfdrive/logcatd", ["./logcatd"]),
   "proclogd": ("selfdrive/proclogd", ["./proclogd"]),
@@ -163,6 +162,7 @@ managed_processes = {
   "updated": "selfdrive.updated",
   "dmonitoringmodeld": ("selfdrive/modeld", ["./dmonitoringmodeld"]),
   "modeld": ("selfdrive/modeld", ["./modeld"]),
+  "locationd": "selfdrive.locationd.locationd",
 }
 
 daemon_processes = {
@@ -483,8 +483,6 @@ def manager_prepare(spinner=None):
   print('len: {}'.format(len(managed_processes)))
   for i, p in enumerate(managed_processes):
     if spinner is not None:
-      with open('/data/spintest', 'a') as f:
-        f.write('{}\n'.format((100.0 - total) + total * (i + 1) / len(managed_processes)))
       print('---')
       print(((100.0 - total) + total * (i + 1) / len(managed_processes),))
       print(p)
