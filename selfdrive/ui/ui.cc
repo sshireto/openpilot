@@ -264,7 +264,7 @@ static void send_df(UIState *s, int status) {
 
   auto words = capnp::messageToFlatArray(msg);
   auto bytes = words.asBytes();
-//  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());
+  s->dynamicfollowbutton_sock->send((char*)bytes.begin(), bytes.size());
   std::cout << "status: " << status << std::endl;
 }
 
