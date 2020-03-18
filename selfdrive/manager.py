@@ -111,8 +111,8 @@ if not prebuilt:
         for i in range(3,-1,-1):
           print("....%d" % i)
           time.sleep(1)
-        subprocess.check_call(["scons", "-c"], cwd=BASEDIR, env=env)
-        shutil.rmtree("/tmp/scons_cache")
+        # subprocess.check_call(["scons", "-c"], cwd=BASEDIR, env=env)
+        # shutil.rmtree("/tmp/scons_cache")
       else:
         raise RuntimeError("scons build failed")
     else:
@@ -188,7 +188,6 @@ persistent_processes = [
   'thermald',
   'logmessaged',
   'ui',
-  'uploader',
 ]
 if ANDROID:
   persistent_processes += [
@@ -439,7 +438,7 @@ def manager_thread():
     if msg.thermal.freeSpace < 0.05:
       logger_dead = True
 
-    if msg.thermal.started:
+    if True or msg.thermal.started:
       for p in car_started_processes:
         if p == "loggerd" and logger_dead:
           kill_managed_process(p)
