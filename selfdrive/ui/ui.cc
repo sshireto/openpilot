@@ -277,7 +277,7 @@ static bool handle_df_button(UIState *s, int touch_x, int touch_y){
       if (s->scene.dfButtonStatus > 2){
         s->scene.dfButtonStatus = 0;
       }
-      // send_df(s, s->scene.dfButtonStatus);
+      send_df(s, s->scene.dfButtonStatus);
       return true;
     }
   }
