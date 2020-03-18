@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <sys/mman.h>
 #include <sys/resource.h>
-#include <iostream.h>
+#include <iostream>
 
 #include <capnp/serialize.h>
 #include "cereal/gen/cpp/log.capnp.h"
