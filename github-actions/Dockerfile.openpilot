@@ -88,7 +88,7 @@ COPY ./github-actions/SConstruct /tmp/openpilot/SConstruct
 
 RUN mkdir -p /tmp/openpilot/selfdrive/test/out
 
-RUN mkdir -p cereal/gen/c/include && touch cereal/gen/c/include/c++.capnp.h cereal/gen/c/include/java.capnp.h
+RUN capnpc cereal/car.capnp cereal/log.capnp --src-prefix=cereal -o c:cereal/gen/c/
 
 RUN ls -la /tmp/openpilot/cereal
 RUN mkdir -p /tmp/openpilot/cereal/gen/c
