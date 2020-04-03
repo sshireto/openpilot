@@ -94,4 +94,5 @@ RUN ls -la /tmp/openpilot/cereal
 RUN mkdir -p /tmp/openpilot/cereal/gen/c
 RUN ls -la /tmp/openpilot/cereal/gen
 RUN ls -la /tmp/openpilot/cereal/gen/c
-RUN cd /tmp/openpilot && scons -j$(nproc)
+RUN cd /tmp/openpilot
+RUN capnpc cereal/car.capnp cereal/log.capnp --src-prefix=cereal -o c:cereal/gen/c/
