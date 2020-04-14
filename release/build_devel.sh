@@ -12,17 +12,17 @@ echo $PPID > /dev/cpuset/app/tasks
 add_subtree() {
   echo "[-] adding $2 subtree T=$SECONDS"
   if [ -d "$2" ]; then
-    if git subtree pull --prefix "$2" https://github.com/commaai/"$1".git "$3" --squash -m "Merge $2 subtree"; then
+    if git subtree pull --prefix "$2" https://github.com/ShaneSmiskol/"$1".git "$3" --squash -m "Merge $2 subtree"; then
       echo "git subtree pull succeeds"
     else
       echo "git subtree pull failed, fixing"
       git merge --abort || true
       git rm -r $2
       git commit -m "Remove old $2 subtree"
-      git subtree add --prefix "$2" https://github.com/commaai/"$1".git "$3" --squash
+      git subtree add --prefix "$2" https://github.com/ShaneSmiskol/"$1".git "$3" --squash
     fi
   else
-    git subtree add --prefix "$2" https://github.com/commaai/"$1".git "$3" --squash
+    git subtree add --prefix "$2" https://github.com/ShaneSmiskol/"$1".git "$3" --squash
   fi
 }
 
@@ -42,7 +42,7 @@ if [ ! -d "$TARGET_DIR" ]; then
     mkdir -p $TARGET_DIR
     cd $TARGET_DIR
     git init
-    git remote add origin git@github.com:commaai/openpilot.git
+    git remote add origin git@github.com:ShaneSmiskol/openpilot.git
 fi
 
 
